@@ -22,4 +22,3 @@ export type Customer = {
   address: string;
   isLoggedIn: boolean;
 };
-
