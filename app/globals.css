@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f6f9;
+  --foreground: #1e2538;
+  --color-caramel-cool: #c5a880;
+  --color-pink-frost: #e2a2b1;
 }
 
 @theme inline {
@@ -10,17 +12,56 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-caramel-cool: var(--color-caramel-cool);
+  --color-pink-frost: var(--color-pink-frost);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #0f1319;
     --foreground: #ededed;
   }
+}
+
+
+@utility bg-brand-gradient {
+  background: linear-gradient(135deg, var(--color-caramel-cool) 0%, var(--color-pink-frost) 100%);
+}
+
+@utility text-brand-gradient {
+  background: linear-gradient(135deg, var(--color-caramel-cool) 0%, var(--color-pink-frost) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Thêm vào file globals.css */
+@utility radial-bg {
+  background: radial-gradient(circle at 50% 50%, #fef3f7 0%, #f4f6f9 60%, #e8eef3 100%);
+}
+
+@utility bg-blob {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(226, 162, 177, 0.3) 0%, rgba(197, 168, 128, 0.1) 2000%);
+  filter: blur(80px);
+  border-radius: 50%;
+  animation: blob-float 7s infinite alternate ease-in-out;
+}
+
+@keyframes blob-float {
+  0% { transform: translate(-20%, -20%); }
+  100% { transform: translate(20%, 20%); }
 }

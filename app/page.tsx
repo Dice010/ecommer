@@ -1,65 +1,74 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React from "react";
+import { mockProducts } from "@/lib/mock-data/Product/mockProduct";
+import { useAuth } from "@/Context/Auth/useAuthContext";
+import { useCartContext } from "@/Context/Cart/useCartContext";
+import { getFontSize } from "@/lib/fontSize";
+import ProductCard from "@/app/Component_Store/ProductCard";
+
+export default function StorePage() {
+  const { user } = useAuth();
+  const { state, dispatch } = useCartContext();
+
+  // Xác định vai trò của tài khoản hiện tại, mặc định nếu chưa đăng nhập là Customer
+  const userRole = user ? user.role : "Customer";
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-[#F4F6F9] text-[#1E2538] py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto">
+        {/* Tiêu đề Trang Cửa Hàng */}
+        <header className="mb-10 text-center">
+          <h1
+            style={{ fontSize: getFontSize("h1") }}
+            className="font-bold tracking-tight text-[#1E2538] mb-2"
+          >
+            Cửa Hàng Hoa Florist Ecom
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p
+            style={{ fontSize: getFontSize("p") }}
+            className="text-gray-600 max-w-2xl mx-auto"
+          >
+            Khám phá bộ sưu tập hoa tươi cao cấp với dải màu sắc tinh tế và
+            thiết kế hiện đại.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+          {/* Badge hiển thị Role để kiểm tra giao diện trực quan */}
+          <div className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+            <span
+              style={{ fontSize: getFontSize("sub") }}
+              className="font-medium text-gray-500"
+            >
+              Chế độ xem: <strong className="text-[#1E2538]">{userRole}</strong>
+            </span>
+          </div>
+        </header>
+
+        {/* Danh sách sản phẩm được map và đẩy dữ liệu vào Component con */}
+        <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {mockProducts.map((product) => {
+            // Tìm kiếm sản phẩm xem đã tồn tại trong giỏ hàng hiện tại chưa
+            const cartItem = state.cart.find(
+              (item) => item.product.id === product.id,
+            );
+
+            return (
+              <ProductCard
+                key={product.id}
+                product={product}
+                cartItem={cartItem}
+                onAddToCart={(id: string) =>
+                  dispatch({ type: "ADD_CART", payload: id })
+                }
+                onRemoveFromCart={(id: string) =>
+                  dispatch({ type: "REMOVE_CART", payload: id })
+                }
+              />
+            );
+          })}
+        </main>
+      </div>
     </div>
   );
 }
